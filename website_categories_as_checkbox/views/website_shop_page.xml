@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="options_categories_recurs">
+        <li class="nav-item">
+            <input type="checkbox" name="check_categ" t-att-value="c.id"
+                t-att-checked="'checked' if c.id in check_categ_set else None" t-att-title="c.name" />
+            <label for="check_categ"><t t-esc="c.name"/></label>
+            <ul t-if="c.child_id" class="nav nav-pills flex-column nav-hierarchy">
+                <t t-foreach="c.child_id" t-as="c">
+                    <t t-call="website_categories_as_checkbox.options_categories_recurs"/>
+                </t>
+            </ul>
+        </li>
+    </template>
+
+    <template id="checkboxes_categories" inherit_id="website_sale.products" active="False" customize_show="True" name="Categories as Checkboxes">
+        <xpath expr="//div[@id='products_grid_before']" position="before">
+            <t t-set="enable_left_column" t-value="True"/>
+        </xpath>
+        <xpath expr="//div[@id='products_grid_before']" position="inside">
+            <button type="button" class="btn btn-link d-lg-none"
+                data-target="#checkboxes_categories_collapse" data-toggle="collapse">
+                Show checkbox categories
+            </button>
+            <div class="collapse d-lg-block" id="checkboxes_categories_collapse">
+                <form class="js_attributes mb-2" method="get">
+                    <input t-if="category" type="hidden" name="category" t-att-value="category.id" />
+                    <input type="hidden" name="search" t-att-value="search" />
+                    <ul class="nav nav-pills flex-column mb-2">
+                        <t t-foreach="categories" t-as="c">
+                            <t t-call="website_categories_as_checkbox.options_categories_recurs"/>
+                        </t>
+                    </ul>
+                </form>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
